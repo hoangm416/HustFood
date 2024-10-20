@@ -14,6 +14,9 @@ const Header = () => {
         <div className="md:hidden">
             <MobileNav />
         </div>
+        <dis className="hidden md:block">
+          <MainNav />
+        </dis>
         </div>
       </div>
   );
