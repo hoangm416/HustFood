@@ -6,3 +6,7 @@
 | Hà Hoàng Tuấn Hùng | 20204751 |
 | Lại Việt Hùng      | 20215585 |
 | Nguyễn Thọ Hùng    | 20210392 |
+
+## Các thư viện cần tải để chạy dự án 
+1. npm install
+2. ...
