@@ -1,5 +1,6 @@
 import { Link } from "lucide-react";
 import MobileNav from "./MobileNav";
+import MainNav from "./MainNav";
 
 const Header = () => {
   return (
@@ -9,16 +10,16 @@ const Header = () => {
           to="/"
           className="text-3xl font-bold tracking-tight text-orange-500"
         >
-          HustFood.com
+          HustFood
         </Link>
         <div className="md:hidden">
-            <MobileNav />
+          <MobileNav />
         </div>
-        <dis className="hidden md:block">
+        <div className="hidden md:block">
           <MainNav />
-        </dis>
         </div>
       </div>
+    </div>
   );
 };
 
