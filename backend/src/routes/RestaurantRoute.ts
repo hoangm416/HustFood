@@ -10,7 +10,7 @@ router.get(
     .isString()
     .trim()
     .notEmpty()
-    .withMessage("City paramenter must be a valid string"),
+    .withMessage("Tên thành phố không hợp lệ"),
   RestaurantController.searchRestaurant
 );
 
