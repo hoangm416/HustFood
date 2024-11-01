@@ -14,9 +14,9 @@ const handleValidationErrors = async (
 };
 
 export const validateMyRestaurantRequest = [
-  body("restaurantName").notEmpty().withMessage("Restaurant name is required"),
-  body("city").notEmpty().withMessage("City is required"),
-  body("country").notEmpty().withMessage("Country is required"),
+  body("restaurantName").notEmpty().withMessage("Tên nhà hàng được yêu cầu"),
+  body("city").notEmpty().withMessage("Tên thành phố được yêu cầu"),
+  body("country").notEmpty().withMessage("Tên thành phố được yêu cầu"),
   body("deliveryPrice")
     .isFloat({ min: 0 })
     .withMessage("Delivery price must be a positive number"),

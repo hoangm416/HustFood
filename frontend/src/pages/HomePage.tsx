@@ -1,16 +1,16 @@
 import landingImage from "../assets/landing.png";
 import appDownloadImage from "../assets/appDownload.png";
-// import SearchBar, { SearchForm } from "@/components/SearchBar";
-
+import SearchBar, {SearchForm} from "@/components/SearchBar";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
-  // const handleSearchSubmit = (searchFormValues: SearchForm) => {
-  //   navigate({
-  //     pathname: `/search/${searchFormValues.searchQuery}`,
-  //   });
-  // };
+  const handleSearchSubmit = (searchFormValues: SearchForm) => {
+    navigate({
+      pathname: `/search/${searchFormValues.searchQuery}`,
+    });
+  };
 
   return (
     <div className="flex flex-col gap-12">
@@ -19,6 +19,10 @@ const HomePage = () => {
           Thưởng thức đồ mang về ngay hôm nay
         </h1>
         <span className="text-xl">Chỉ một cú nhấp chuột có ngay món bạn muốn</span>
+        <SearchBar 
+        placeHolder="Nhập tên thành phố hoặc thị trấn" 
+        onSubmit={handleSearchSubmit}
+        />
 
       </div>
       <div className="grid md:grid-cols-2 gap-5">
