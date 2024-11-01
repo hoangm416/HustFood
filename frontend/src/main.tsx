@@ -9,7 +9,9 @@ import AppRoutes from "./AppRouters";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Router>
-      <AppRoutes />
+      <Auth0ProviderWithNavigate>
+        <AppRoutes />
+      </Auth0ProviderWithNavigate>
     </Router>
   </React.StrictMode>
 );
