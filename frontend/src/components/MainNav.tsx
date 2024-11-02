@@ -8,12 +8,7 @@ const MainNav = () => {
             variant="ghost"
             className="font-bold hover:text-orange-500 hover:bg-white"
             onClick={async () => await loginWithRedirect()}
-        >
-<<<<<<< HEAD
-            Đăng Nhập
-=======
-            Đăng nhập
->>>>>>> 6cf9985ea44819e9869d35b695cde0f0ee965084
+        >Đăng nhập
         </Button>
     );
 };
