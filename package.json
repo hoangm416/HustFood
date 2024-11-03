@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 
 {
   "dependencies": {
-    "@auth0/auth0-react": "^2.2.4",
-    "@hookform/resolvers": "^3.9.1",
-=======
-{
-  "dependencies": {
->>>>>>> e109f37724102eab15e1a89403cb4f3a28de030e
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-separator": "^1.1.0",
@@ -21,27 +14,22 @@
     "mongodb": "^6.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-<<<<<<< HEAD
     "react-hook-form": "^7.53.1",
     "react-router-dom": "^6.27.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss": "^3.4.14",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.8"
-=======
+    "zod": "^3.23.8",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.27.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss": "^3.4.14",
     "tailwindcss-animate": "^1.0.7"
->>>>>>> e109f37724102eab15e1a89403cb4f3a28de030e
+
   },
   "devDependencies": {
     "@types/node": "^22.8.1",
     "vite": "^5.4.10"
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> e109f37724102eab15e1a89403cb4f3a28de030e
+
