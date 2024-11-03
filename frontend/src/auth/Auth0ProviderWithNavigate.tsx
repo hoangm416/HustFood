@@ -1,6 +1,5 @@
 import { AppState, Auth0Provider, User } from "@auth0/auth0-react";
 import React from "react";
-import { redirect } from "react-router-dom";
 type Props = {
   children: React.ReactNode;
 };
@@ -13,7 +12,7 @@ const Auth0ProviderWithNavigate = ({ children }: Props) => {
   if (!domain || !clientId || !redirectUri) {
     throw new Error("unable to initialize auth");
   }
-  const onRedirectCallback = (appState?: AppState, user?: User) => {
+  const onRedirectCallback = (_appState?: AppState, user?: User) => {
     console.log("USER", user);
   };
   return (
