@@ -7,6 +7,6 @@
 | Lại Việt Hùng      | 20215585 |
 | Nguyễn Thọ Hùng    | 20210392 |
 
-## Các thư viện cần tải để chạy dự án 
-1. npm install
-2. ...
+## Các câu lệnh CLI để chạy dự án 
+1. npm install: tải tất cả package cần thiết 
+2. npm run dev: chạy frontend
