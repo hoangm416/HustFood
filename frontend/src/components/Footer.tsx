@@ -7,11 +7,8 @@ const Footer = () => {
           </span>
           <span className="text-white font-bold tracking-tight flex gap-4">
             <span>Chính sách bảo mật</span>
-<<<<<<< HEAD
             <span>Điều kiện phục vụ</span>
-=======
             <span>Điều khoản dịch vụ</span>
->>>>>>> 6cf9985ea44819e9869d35b695cde0f0ee965084
           </span>
         </div>
       </div>
