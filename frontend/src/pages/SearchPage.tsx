@@ -34,11 +34,11 @@ const SearchPage = () => {
   };
 
   if (isLoading) {
-    <span>Loading ...</span>;
+    <span>Đang tải.....</span>;
   }
 
   if (!results?.data || !city) {
-    return <span>No results found</span>;
+    return <span>Không tìm thấy kết quả</span>;
   }
 
   return (
@@ -47,9 +47,9 @@ const SearchPage = () => {
         <div id="main-content" className="flex flex-col gap-5"></div>
         <SearchBar 
         searchQuery={searchState.searchQuery}
-        onSubmit={setSearchQuery}
         placeHolder="Tìm kiếm món ăn hoặc tên cửa hàng"
         onReset={resetSearch}
+        onSubmit={setSearchQuery}
         />
         <SearchResultInfo total={results.pagination.total} city={city} />
         {results.data.map((restaurant) => (
