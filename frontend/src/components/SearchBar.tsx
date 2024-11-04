@@ -22,14 +22,13 @@ type Props = {
   searchQuery?: string;
 };
 
-const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
+const SearchBar = ({ onSubmit, onReset, placeHolder,searchQuery}: Props) => {
   const form = useForm<SearchForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       searchQuery,
     },
   });
-
   useEffect(() => {
     form.reset({ searchQuery });
   }, [form, searchQuery]);
@@ -48,7 +47,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={`flex items-center gap-3 justify-between flex-row border-2 rounded-full p-3 ${
+        className={`flex items-center gap-3 justify-between flex-row border-2 rounded-full p-3 mx-5 ${
           form.formState.errors.searchQuery && "border-red-500"
         }`}
       >
