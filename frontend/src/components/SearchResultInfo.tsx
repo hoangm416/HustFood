@@ -14,7 +14,7 @@ const SearchResultInfo = ({ total, city }: Props) => {
           to="/"
           className="ml-1 text-sm font-semibold underline cursor-pointer text-blue-500"
         >
-          Đổi thành phố
+          Đổi địa điểm
         </Link>
       </span>
     </div>

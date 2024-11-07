@@ -21,7 +21,7 @@ const SORT_OPTIONS = [
     value: "deliveryPrice",
   },
   {
-    label: "Thời gian giao hàng ước tính",
+    label: "Thời gian giao hàng",
     value: "estimatedDeliveryTime",
   },
 ];
