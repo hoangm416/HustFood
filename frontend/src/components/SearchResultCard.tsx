@@ -39,7 +39,7 @@ const SearchResultCard = ({ restaurant }: Props) => {
             </div>
             <div className="flex items-center gap-1">
               <Banknote />
-              Giao hàng: ${(restaurant.deliveryPrice / 100).toFixed(2)}
+              Giao hàng: {restaurant.deliveryPrice} VND
             </div>
           </div>
         </div>

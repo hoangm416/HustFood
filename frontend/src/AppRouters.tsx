@@ -9,21 +9,21 @@ import ManageRestaurantPage from "./pages/ManageRestaurantPage";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={ <Layout><HomePage/></Layout>} />
-      <Route element={<ProtectedRoute/>}>
+      <Route path="/" element={<Layout><HomePage /></Layout>} />
+      {/* <Route element={<ProtectedRoute/>}>
         <Route path="/user-profile" element={<span>USER PROFILE PAGE</span>} />
         <Route path="/manage-restaurant" element={<Layout><ManageRestaurantPage/></Layout>} />
-      </Route>
+      </Route> */}
       <Route path="*" element={<Navigate to="/" />} />
-      <Route 
-      path="/search/:city" 
-      element={
-        <Layout showHero={false}>
-          <SearchPage />
-        </Layout>}
-        />
+      <Route
+        path="/search/:city"
+        element={
+          <Layout showHero={false}>
+            <SearchPage />
+          </Layout>}
+      />
 
-        <Route
+      <Route
         path="/detail/:restaurantId"
         element={
           <Layout showHero={false}>

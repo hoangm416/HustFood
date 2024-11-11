@@ -8,10 +8,10 @@ import { Trash } from "lucide-react";
 type Props = {
     restaurant: Restaurant;
     cartItems: CartItem[];
-    // removeFromCart: (cartItem: CartItem) => void;
+    removeFromCart: (cartItem: CartItem) => void;
 };
 
-const OrderSummary = ({ restaurant, cartItems }: Props) => {
+const OrderSummary = ({ restaurant, cartItems, removeFromCart }: Props) => {
     const getTotalCost = () => {
         const totalInPence = cartItems.reduce(
             (total, cartItem) => total + cartItem.price * cartItem.quantity,
@@ -45,7 +45,7 @@ const OrderSummary = ({ restaurant, cartItems }: Props) => {
                                 className="cursor-pointer"
                                 color="red"
                                 size={20}
-                            // onClick={() => removeFromCart(item)}
+                                onClick={() => removeFromCart(item)}
                             />
                             {(item.price * item.quantity)} VND
                         </span>
