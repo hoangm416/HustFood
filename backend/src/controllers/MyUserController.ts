@@ -41,7 +41,7 @@ const updateCurrentUser = async (req:Request, res: Response) => {
     console.log(error);
     res.status(500).json({ message: "Error updating user" });
   }
-}
+};
 
 export default {
   createCurrentUser,
