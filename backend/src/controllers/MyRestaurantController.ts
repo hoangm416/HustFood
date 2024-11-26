@@ -8,7 +8,8 @@ const getMyRestaurant = async (req: Request, res: Response) => {
   try {
     const restaurant = await Restaurant.findOne({ user: req.userId });
     if (!restaurant) {
-      return res.status(404).json({ message: "không tìm thấy nhà hàng" });
+     res.status(404).json({ message: "không tìm thấy nhà hàng" });
+     return;
     }
     res.json(restaurant);
   } catch (error) {
@@ -22,9 +23,8 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     const existingRestaurant = await Restaurant.findOne({ user: req.userId });
 
     if (existingRestaurant) {
-      return res
-        .status(409)
-        .json({ message: "Nhà hàng người dùng đã tồn tại" });
+      res.status(409).json({ message: "Nhà hàng người dùng đã tồn tại" });
+      return;
     }
 
     const imageUrl = await uploadImage(req.file as Express.Multer.File);
@@ -49,7 +49,8 @@ const updateMyRestaurant = async (req: Request, res: Response) => {
     });
 
     if (!restaurant) {
-      return res.status(404).json({ message: "không tìm thấy nhà hàng" });
+      res.status(404).json({ message: "không tìm thấy nhà hàng" });
+      return;
     }
 
     restaurant.restaurantName = req.body.restaurantName;
