@@ -22,3 +22,4 @@
 1. MongoDB.com cnweb43@gmail.com - Group222@
 2. Auth0.com cnweb43@gmail.com - Groupweb222@
 3. Postman.com cnweb43 - Groupweb222@
+4. Cloudinary.com cnweb43@gmail.com - Group222@
