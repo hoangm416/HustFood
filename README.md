@@ -7,3 +7,8 @@
 | Lại Việt Hùng      | 20215585 |
 | Nguyễn Thọ Hùng    | 20210392 |
 
+## Hướng dẫn chạy
+- Sửa file .env 
+- npm install: Tải các thư viện 
+- npm run dev: Chạy trên localhost
+## Deploy lên Firebase/Render
