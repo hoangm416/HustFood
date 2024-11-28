@@ -11,4 +11,5 @@
 - Sửa file .env 
 - npm install: Tải các thư viện 
 - npm run dev: Chạy trên localhost
+  
 ## Deploy lên Firebase/Render
