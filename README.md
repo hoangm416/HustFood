@@ -15,8 +15,6 @@
 2. npm run dev: chạy frontend và backend
 3. npx shadcn@latest add ...: tải UI components
 
-## Hosting dự án
-
 ## Account
 
 1. MongoDB.com: cnweb43@gmail.com - Group222@
