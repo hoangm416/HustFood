@@ -6,13 +6,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { Separator } from "@radix-ui/react-separator";
+import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { useAuth0 } from "@auth0/auth0-react";
-import MobileNavLinks from "./MobileNavLink";
+import MobileNavLinks from "./MobileNavLinks";
 
 const MobileNav = () => {
   const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+
   return (
     <Sheet>
       <SheetTrigger>
@@ -26,23 +27,22 @@ const MobileNav = () => {
               {user?.email}
             </span>
           ) : (
-            <span> Chào mừng đến với HUSTFOOD</span>
+            <span> Chào mừng đến với HustFood</span>
           )}
         </SheetTitle>
-        <Separator>
-          <SheetDescription className="flex flex-col gap-4">
-            {isAuthenticated ? (
-              <MobileNavLinks />
-            ) : (
-              <Button
-                onClick={() => loginWithRedirect}
-                className="flex-1 font-bold bg-orange-500"
-              >
-                Đăng nhập
-              </Button>
-            )}
-          </SheetDescription>
-        </Separator>
+        <Separator />
+        <SheetDescription className="flex flex-col gap-4">
+          {isAuthenticated ? (
+            <MobileNavLinks />
+          ) : (
+            <Button
+              onClick={() => loginWithRedirect()}
+              className="flex-1 font-bold bg-orange-500"
+            >
+              Đăng nhập
+            </Button>
+          )}
+        </SheetDescription>
       </SheetContent>
     </Sheet>
   );

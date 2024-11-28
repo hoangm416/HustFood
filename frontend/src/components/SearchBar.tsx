@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 const formSchema = z.object({
   searchQuery: z.string({
-    required_error: "Tên nhà hàng được yêu cầu",
+    required_error: "Restaurant name is required",
   }),
 });
 
@@ -22,13 +22,14 @@ type Props = {
   searchQuery?: string;
 };
 
-const SearchBar = ({ onSubmit, onReset, placeHolder,searchQuery}: Props) => {
+const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
   const form = useForm<SearchForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       searchQuery,
     },
   });
+
   useEffect(() => {
     form.reset({ searchQuery });
   }, [form, searchQuery]);
@@ -47,9 +48,8 @@ const SearchBar = ({ onSubmit, onReset, placeHolder,searchQuery}: Props) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={`flex items-center gap-3 justify-between flex-row border-2 rounded-full p-3 ${
-          form.formState.errors.searchQuery && "border-red-500"
-        }`}
+        className={`flex items-center gap-3 justify-between flex-row border-2 rounded-full p-3 ${form.formState.errors.searchQuery && "border-red-500"
+          }`}
       >
         <Search
           strokeWidth={2.5}
@@ -59,18 +59,17 @@ const SearchBar = ({ onSubmit, onReset, placeHolder,searchQuery}: Props) => {
         <FormField
           control={form.control}
           name="searchQuery"
-          render={({ field }) => {
-              return (
-                  <FormItem className="flex-1">
-                      <FormControl>
-                          <Input
-                              {...field}
-                              className="border-none shadow-none text-xl focus-visible:ring-0"
-                              placeholder={placeHolder} />
-                      </FormControl>
-                  </FormItem>
-              );
-          }}
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormControl>
+                <Input
+                  {...field}
+                  className="border-none shadow-none text-xl focus-visible:ring-0"
+                  placeholder={placeHolder}
+                />
+              </FormControl>
+            </FormItem>
+          )}
         />
 
         <Button
@@ -79,7 +78,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder,searchQuery}: Props) => {
           variant="outline"
           className="rounded-full"
         >
-          Tải lại
+          Đặt lại
         </Button>
         <Button type="submit" className="rounded-full bg-orange-500">
           Tìm kiếm

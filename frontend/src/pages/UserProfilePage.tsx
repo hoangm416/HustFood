@@ -1,16 +1,16 @@
 import { useGetMyUser, useUpdateMyUser } from "@/api/MyUserApi";
-import UserProfileForm from "@/forms/manage-restaurant-form/user-profile-form/UserProfileForm";
+import UserProfileForm from "@/forms/user-profile-form/UserProfileForm";
 
 const UserProfilePage = () => {
   const { currentUser, isLoading: isGetLoading } = useGetMyUser();
   const { updateUser, isLoading: isUpdateLoading } = useUpdateMyUser();
 
   if (isGetLoading) {
-    return <span>Loading ...</span>;
+    return <span>Đang tải...</span>;
   }
 
   if (!currentUser) {
-    return <span>Unable to load user profile</span>;
+    return <span>Không thể tải hồ sơ người dùng</span>;
   }
 
   return (

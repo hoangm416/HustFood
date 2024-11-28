@@ -16,7 +16,7 @@ const MenuSection = () => {
       <div>
         <h2 className="text-2xl font-bold">Menu</h2>
         <FormDescription>
-        Tạo thực đơn của bạn và đặt tên và giá cho từng món
+          Tạo thực đơn mà quán của bạn phục vụ
         </FormDescription>
       </div>
       <FormField
@@ -34,7 +34,7 @@ const MenuSection = () => {
         )}
       />
       <Button type="button" onClick={() => append({ name: "", price: "" })}>
-        Thêm mục menu
+        Thêm món ăn
       </Button>
     </div>
   );

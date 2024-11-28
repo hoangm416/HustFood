@@ -3,8 +3,8 @@ export type User = {
   email: string;
   name: string;
   addressLine1: string;
-  city: string;
-  country: string;
+  phone: string; // da sua
+  idCard: string; // da sua
 };
 
 export type MenuItem = {
@@ -46,7 +46,7 @@ export type Order = {
   deliveryDetails: {
     name: string;
     addressLine1: string;
-    city: string;
+    phone: string;
     email: string;
   };
   totalAmount: number;
@@ -63,4 +63,3 @@ export type RestaurantSearchResponse = {
     pages: number;
   };
 };
-

@@ -1,13 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import "./index.css";
+import "./global.css";
 import { BrowserRouter as Router } from "react-router-dom";
-import AppRoutes from "./AppRouters";
+import AppRoutes from "./AppRoutes";
 import Auth0ProviderWithNavigate from "./auth/Auth0ProviderWithNavigate";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "sonner";
-// import Auth0ProviderWithNavigate from "./auth/Auth0ProviderWithNavigate.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {

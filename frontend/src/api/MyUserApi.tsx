@@ -22,6 +22,7 @@ export const useGetMyUser = () => {
     if (!response.ok) {
       throw new Error("Failed to fetch user");
     }
+
     return response.json();
   };
 
@@ -31,9 +32,10 @@ export const useGetMyUser = () => {
     error,
   } = useQuery("fetchCurrentUser", getMyUserRequest);
 
-  if(error) {
+  if (error) {
     toast.error(error.toString());
   }
+
   return { currentUser, isLoading };
 };
 
@@ -60,6 +62,7 @@ export const useCreateMyUser = () => {
       throw new Error("Failed to create user");
     }
   };
+
   const {
     mutateAsync: createUser,
     isLoading,
@@ -75,18 +78,19 @@ export const useCreateMyUser = () => {
   };
 };
 
-type useUpdateMyUserRequest = {
+type UpdateMyUserRequest = {
   name: string;
   addressLine1: string;
-  city: string;
-  country: string;
+  phone: string;
+  idCard: string;
 };
 
 export const useUpdateMyUser = () => {
   const { getAccessTokenSilently } = useAuth0();
 
-  const updateMyUserRequest = async (formData: useUpdateMyUserRequest) => {
+  const updateMyUserRequest = async (formData: UpdateMyUserRequest) => {
     const accessToken = await getAccessTokenSilently();
+
     const response = await fetch(`${API_BASE_URL}/api/my/user`, {
       method: "PUT",
       headers: {
@@ -99,6 +103,8 @@ export const useUpdateMyUser = () => {
     if (!response.ok) {
       throw new Error("Failed to update user");
     }
+
+    return response.json();
   };
 
   const {
@@ -110,7 +116,7 @@ export const useUpdateMyUser = () => {
   } = useMutation(updateMyUserRequest);
 
   if (isSuccess) {
-    toast.success("Hồ sơ đã được cập nhật!");
+    toast.success("User profile updated!");
   }
 
   if (error) {

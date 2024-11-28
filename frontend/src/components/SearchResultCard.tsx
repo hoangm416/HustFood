@@ -39,7 +39,7 @@ const SearchResultCard = ({ restaurant }: Props) => {
             </div>
             <div className="flex items-center gap-1">
               <Banknote />
-              Giao hàng: {restaurant.deliveryPrice} VND
+              Giá vận chuyển từ {restaurant.deliveryPrice}đ
             </div>
           </div>
         </div>

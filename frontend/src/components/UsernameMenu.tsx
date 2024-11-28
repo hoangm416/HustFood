@@ -30,7 +30,7 @@ const UsernameMenu = () => {
         </DropdownMenuItem>
         <DropdownMenuItem>
           <Link to="/user-profile" className="font-bold hover:text-orange-500">
-            Hồ sơ
+            Hồ sơ cá nhân
           </Link>
         </DropdownMenuItem>
         <Separator />

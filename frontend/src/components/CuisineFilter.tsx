@@ -38,7 +38,7 @@ const CuisineFilter = ({
           onClick={handleCuisinesReset}
           className="text-sm font-semibold mb-2 underline cursor-pointer text-blue-500"
         >
-          Tạo lại
+          Làm mới bộ lọc
         </div>
       </div>
 
@@ -59,11 +59,10 @@ const CuisineFilter = ({
                 />
                 <Label
                   htmlFor={`cuisine_${cuisine}`}
-                  className={`flex flex-1 items-center cursor-pointer text-sm rounded-full px-4 py-2 font-semibold ${
-                    isSelected
+                  className={`flex flex-1 items-center cursor-pointer text-sm rounded-full px-4 py-2 font-semibold ${isSelected
                       ? "border border-green-600 text-green-600"
                       : "border border-slate-300"
-                  }`}
+                    }`}
                 >
                   {isSelected && <Check size={20} strokeWidth={3} />}
                   {cuisine}
@@ -79,11 +78,11 @@ const CuisineFilter = ({
         >
           {isExpanded ? (
             <span className="flex flex-row items-center">
-              Xem thêm <ChevronUp />
+              Rút gọn <ChevronUp />
             </span>
           ) : (
             <span className="flex flex-row items-center">
-              Ẩn bớt <ChevronDown />
+              Xem thêm <ChevronDown />
             </span>
           )}
         </Button>

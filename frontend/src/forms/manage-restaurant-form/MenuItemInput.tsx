@@ -25,12 +25,12 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center gap-1">
-              Tên <FormMessage />
+              Tên món ăn <FormMessage />
             </FormLabel>
             <FormControl>
               <Input
                 {...field}
-                placeholder="Cheese Pizza"
+                placeholder="Phở bò"
                 className="bg-white"
               />
             </FormControl>
@@ -43,10 +43,10 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center gap-1">
-              Giá thành (VNĐ) <FormMessage />
+              Giá (đ) <FormMessage />
             </FormLabel>
             <FormControl>
-              <Input {...field} placeholder="30000" className="bg-white" />
+              <Input {...field} placeholder="40000" className="bg-white" />
             </FormControl>
           </FormItem>
         )}

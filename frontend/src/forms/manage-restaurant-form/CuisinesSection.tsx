@@ -1,32 +1,40 @@
-import { FormDescription, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+  FormDescription,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { cuisineList } from "@/config/restaurant-options-config";
 import { useFormContext } from "react-hook-form";
 import CuisineCheckbox from "./CuisineCheckbox";
 
 const CuisinesSection = () => {
-    const { control } = useFormContext();
+  const { control } = useFormContext();
 
-
-return (
+  return (
     <div className="space-y-2">
-        <div>
-            <h2 className="text-2x1 font-bold">Món ăn</h2>
-            <FormDescription>
-                Chọn món ăn nhà hàng bạn phục vụ
-            </FormDescription>
-        </div>
-        <FormField control={control} name="cuisines" render={({field})=>(
-            <FormItem>
-                <div className="grid md:grid-cols-5 gap-1">
-                    {cuisineList.map((cuisineItem) => (
-                    <CuisineCheckbox cuisine={cuisineItem} field={field} />
-                    ))}
-                </div>
-                <FormMessage />
-            </FormItem>
-        )}/>
+      <div>
+        <h2 className="text-2xl font-bold">Bộ sưu tập món ăn</h2>
+        <FormDescription>
+          Lựa chọn các loại món ăn mà quán của bạn phục vụ
+        </FormDescription>
+      </div>
+      <FormField
+        control={control}
+        name="cuisines"
+        render={({ field }) => (
+          <FormItem>
+            <div className="grid md:grid-cols-5 gap-1">
+              {cuisineList.map((cuisineItem) => (
+                <CuisineCheckbox cuisine={cuisineItem} field={field} />
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
-)
+  );
 };
 
 export default CuisinesSection;
