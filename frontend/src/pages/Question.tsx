@@ -125,7 +125,6 @@ const Question = () => {
                             }`}
                     >
                         {tab.label}
-                        
                     </button>
                 
                 ))}
@@ -143,7 +142,6 @@ const Question = () => {
                             </div>
                             {showAnswer && (
                                 <div className="text-sm">
-                                {/* Hiển thị từng câu trả lời trên một dòng mới */}
                                 {item.answer[index].split('\n').map((line, i) => (
                                   <p key={i}>{line}</p>
                                 ))}
