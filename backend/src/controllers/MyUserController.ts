@@ -6,14 +6,14 @@ const getCurrentUser = async (req: Request, res: Response) => {
   try {
     const currentUser = await User.findOne({ _id: req.userId });
     if (!currentUser) {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "Không tìm thấy hồ sơ" });
       return;
     }
     res.json(currentUser);
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      message: "Something went wrong",
+      message: "Đã xảy ra lỗi",
     });
     return;
   }
@@ -35,7 +35,7 @@ const createCurrentUser = async (req: Request, res: Response) => {
         res.status(201).json(newUser.toObject());
       } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Error creating user" });
+        res.status(500).json({ message: "Lỗi đăng ký hồ sơ" });
       }
 
 
@@ -47,7 +47,7 @@ const updateCurrentUser = async (req: Request, res: Response) => {
       const user = await User.findById(req.userId);
 
       if(!user){
-        res.status(4).json({ message: "User not found" });
+        res.status(4).json({ message: "Không tìm thấy hồ sơ" });
         return;
       }
 
@@ -62,7 +62,7 @@ const updateCurrentUser = async (req: Request, res: Response) => {
 
   } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Error updating user"});
+      res.status(500).json({ message: "Lỗi cập nhật hồ sơ"});
     }
   };
 
