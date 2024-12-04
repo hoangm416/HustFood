@@ -75,8 +75,7 @@ const AppRoutes = () => {
         
         <Route
           path="/question"
-          element={
-            <Layout>
+          element={<Layout>
               <Question />
             </Layout>
           }

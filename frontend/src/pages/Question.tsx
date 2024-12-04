@@ -134,16 +134,16 @@ const Question = () => {
             {question.map((item) => (
                 activeTab === item.id && (
                     <div>
-                        {item.question.map((subQuestion, index) => (
+                        {item.question.map((question, index) => (
                         <div key={item.id} className="bg-white shadow-md rounded-lg p-6">
                             <div className="border-b last:border-none py-4 flex items-center justify-between">
-                                <p key={index} className="text-lg font-medium text-gray-800">{subQuestion} </p>
+                                <p key={index} className="text-lg font-medium text-gray-800">{question} </p>
                                 <button className="text-blue-500 font-bold text-xl" onClick={() => setShowAnswer(!showAnswer)}>{showAnswer ? "-" : "+"}</button>
                             </div>
                             {showAnswer && (
                                 <div className="text-sm">
-                                {item.answer[index].split('\n').map((line, i) => (
-                                  <p key={i}>{line}</p>
+                                {item.answer[index].split('\n').map((answer, i) => (
+                                  <p key={i}>{answer}</p>
                                 ))}
                               </div>
                             )}
