@@ -31,6 +31,21 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     }
   };
 
+  const getMyRestaurant = async (req: Request, res: Response) => {
+    try {
+      const restaurant = await Restaurant.findOne({ user: req.userId });
+      if (!restaurant) {
+       res.status(404).json({ message: "không tìm thấy nhà hàng" });
+       return;
+      }
+      res.json(restaurant);
+    } catch (error) {
+      console.log("error", error);
+      res.status(500).json({ message: "Lỗi khi tìm nạp nhà hàng" });
+    }
+  };
+
   export default {
+    getMyRestaurant,
     createMyRestaurant,
   }
