@@ -63,10 +63,16 @@ const Question = () => {
         {
             id: 'partner', 
             question: [
+                'Làm thế nào để đăng ký làm đối tác?',
                 'Những đối tượng nào có thể tham gia làm tối tác với HustFood',
-                'Làm thế nào để đăng ký làm đối tác?'
             ],
             answer: [
+                `Để đăng ký làm đối tác với HustFood, bạn có thể thực hiện các bước sau:
+                    Bước 1: Truy cập vào website hoặc ứng dụng HustFood: Tìm mục "Đối tác" hoặc "Trở thành đối tác" trên trang chính.
+                    Bước 2: Điền thông tin đăng ký: Nhập thông tin yêu cầu như tên công ty, địa chỉ, thông tin liên hệ, và loại hình dịch vụ/sản phẩm bạn cung cấp.
+                    Bước 3: Gửi yêu cầu đăng ký: Sau khi điền thông tin, gửi yêu cầu để đội ngũ HustFood xem xét.
+                    Bước 4: Chờ phê duyệt: HustFood sẽ xem xét thông tin và liên hệ với bạn nếu hồ sơ đủ điều kiện để trở thành đối tác.
+                Nếu bạn có câu hỏi thêm, có thể liên hệ với bộ phận hỗ trợ đối tác của HustFood để được hướng dẫn chi tiết.`,
                 `Các đối tượng có thể tham gia làm đối tác với HustFood bao gồm:
                     1. Nhà hàng, quán ăn: Các nhà hàng, quán ăn, quán cà phê, hay các cơ sở kinh doanh thực phẩm có thể trở thành đối tác cung cấp món ăn, thực phẩm cho dịch vụ giao hàng của HustFood.
                     2. Các cửa hàng bán lẻ: Các cửa hàng bán đồ ăn nhanh, thực phẩm chế biến sẵn, hoặc các sản phẩm tiêu dùng có thể hợp tác với HustFood để cung cấp sản phẩm cho khách hàng.
@@ -75,13 +81,7 @@ const Question = () => {
                     5. Những người cung cấp dịch vụ công nghệ: Các đối tác cung cấp dịch vụ công nghệ, ví dụ như các công ty cung cấp phần mềm quản lý đơn hàng, hệ thống thanh toán, hoặc các dịch vụ tích hợp khác có thể hợp tác với HustFood để nâng cao hiệu quả hoạt động.
                     6. Doanh nghiệp nhỏ và vừa (SMEs): Các doanh nghiệp vừa và nhỏ trong ngành thực phẩm, đồ uống, hoặc các ngành liên quan đến giao hàng cũng có thể trở thành đối tác của HustFood, giúp mở rộng mạng lưới dịch vụ.
                     7. Nhà phân phối sản phẩm hoặc dịch vụ khác: Các công ty cung cấp các sản phẩm và dịch vụ có thể tham gia vào các chương trình hợp tác với HustFood để mở rộng thị trường và tiếp cận khách hàng.
-                Các đối tác này có thể đăng ký và hợp tác với HustFood thông qua việc đăng ký trên website hoặc ứng dụng, sau đó hoàn tất các thủ tục cần thiết và bắt đầu cung cấp dịch vụ hoặc sản phẩm cho nền tảng.`,
-                `Để đăng ký làm đối tác với HustFood, bạn có thể thực hiện các bước sau:
-                    Bước 1: Truy cập vào website hoặc ứng dụng HustFood: Tìm mục "Đối tác" hoặc "Trở thành đối tác" trên trang chính.
-                    Bước 2: Điền thông tin đăng ký: Nhập thông tin yêu cầu như tên công ty, địa chỉ, thông tin liên hệ, và loại hình dịch vụ/sản phẩm bạn cung cấp.
-                    Bước 3: Gửi yêu cầu đăng ký: Sau khi điền thông tin, gửi yêu cầu để đội ngũ HustFood xem xét.
-                    Bước 4: Chờ phê duyệt: HustFood sẽ xem xét thông tin và liên hệ với bạn nếu hồ sơ đủ điều kiện để trở thành đối tác.
-                Nếu bạn có câu hỏi thêm, có thể liên hệ với bộ phận hỗ trợ đối tác của HustFood để được hướng dẫn chi tiết.`
+                Các đối tác này có thể đăng ký và hợp tác với HustFood thông qua việc đăng ký trên website hoặc ứng dụng, sau đó hoàn tất các thủ tục cần thiết và bắt đầu cung cấp dịch vụ hoặc sản phẩm cho nền tảng.`
             ]
         },
         {
