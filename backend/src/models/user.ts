@@ -15,10 +15,10 @@ const userSchema = new mongoose.Schema({
   addressLine1: {
     type: String,
   },
-  city: {
+  phone: {
     type: String,
   },
-  country: {
+  idCard: {
     type: String,
   },
 });
