@@ -20,31 +20,31 @@ export const validateMyRestaurantRequest = [
   body("country").notEmpty().withMessage("Tên thành phố được yêu cầu"),
   body("deliveryPrice")
     .isFloat({ min: 0 })
-    .withMessage("Delivery price must be a positive number"),
+    .withMessage("Giá giao hàng phải là một số dương"),
   body("estimatedDeliveryTime")
     .isInt({ min: 0 })
-    .withMessage("Estimated delivery time must be a postivie integar"),
+    .withMessage("Thời gian giao hàng ước tính phải là một số nguyên dương"),
   body("cuisines")
     .isArray()
-    .withMessage("Cuisines must be an array")
+    .withMessage("Danh sách món ăn phải là một mảng")
     .not()
     .isEmpty()
-    .withMessage("Cuisines array cannot be empty"),
-  body("menuItems").isArray().withMessage("Menu items must be an array"),
-  body("menuItems.*.name").notEmpty().withMessage("Menu item name is required"),
+    .withMessage("Danh sách món ăn không thể để trống"),
+  body("menuItems").isArray().withMessage("Thực đơn phải là một mảng"),
+  body("menuItems.*.name").notEmpty().withMessage("Các món ăn trong thực đơn đã được yêu cầu"),
   body("menuItems.*.price")
     .isFloat({ min: 0 })
-    .withMessage("Menu item price is required and must be a postive number"),
+    .withMessage("Đơn giá các món ăn trong thực đơn đã được yêu cầu và là một số nguyên dương"),
   handleValidationErrors,
 ];
 
 export const validateMyUserRequest = [
-  body("name").isString().notEmpty().withMessage("Name must be a string"),
+  body("name").isString().notEmpty().withMessage("Họ tên phải là một chuỗi ký tự"),
   body("addressLine1")
     .isString()
     .notEmpty()
-    .withMessage("AddressLine1 must be a string"),
-  body("city").isString().notEmpty().withMessage("City must be a string"),
-  body("country").isString().notEmpty().withMessage("Country must be a string"),
+    .withMessage("Địa chỉ phải là một chuỗi ký tự"),
+  body("city").isString().notEmpty().withMessage("tên của Quận/Huyện phải là một chuỗi ký tự"),
+  body("country").isString().notEmpty().withMessage("Tên của Tỉnh/Thành phố phỉa là một chuỗi ký tự"),
   handleValidationErrors,
 ];
