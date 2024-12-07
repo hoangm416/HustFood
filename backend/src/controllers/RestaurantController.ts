@@ -7,14 +7,18 @@ const getRestaurant = async (req: Request, res: Response) => {
 
     const restaurant = await Restaurant.findById(restaurantId);
     if (!restaurant) {
-     res.status(404).json({ message: "restaurant not found" });
+     res.status(404).json({ 
+      message: "Không tìm thấy nhà hàng" 
+    });
      return;
     }
 
     res.json(restaurant);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ 
+      message: "Đã xảy ra lỗi: " + error 
+    });
   }
 };
 
@@ -82,7 +86,9 @@ const searchRestaurant = async (req: Request, res: Response) => {
     res.json(response);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Đã xảy ra lỗi" });
+    res.status(500).json({ 
+      message: "Đã xảy ra lỗi" + error
+    });
   }
 };
 
