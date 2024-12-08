@@ -12,3 +12,6 @@
 2. Auth0.com: cnweb43@gmail.com - Groupweb222@    Code_Login: VE2Q4B27JQZNJ1WFNDEU4534
 3. Postman.com: cnweb43 - Groupweb222@
 4. Cloudinary.com: cnweb43@gmail.com - Group222@
+
+## translate .ts -> js
+chạy lệnh terminal: npm run build
