@@ -5,7 +5,7 @@ const getCurrentUser = async (req: Request, res: Response) => {
   try {
     const currentUser = await User.findOne({ _id: req.userId });
     if (!currentUser) {
-      res.status(404).json({ message: "Không tìm thấy hồ sơ" });
+      res.status(404).json({ message: "Không tìm thấy người dùng" });
       return;
     }
     res.json(currentUser);
@@ -44,7 +44,7 @@ const updateCurrentUser = async (req: Request, res: Response) => {
     const user = await User.findById(req.userId);
 
     if (!user) {
-      res.status(4).json({ message: "Không tìm thấy hồ sơ" });
+      res.status(404).json({ message: "Không tìm thấy người dùng" });
       return;
     }
 
@@ -63,7 +63,7 @@ const updateCurrentUser = async (req: Request, res: Response) => {
 };
 
 export default {
+  getCurrentUser,
   createCurrentUser,
   updateCurrentUser,
-  getCurrentUser,
 };
