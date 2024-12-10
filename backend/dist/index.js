@@ -20,6 +20,7 @@ const MyUserRoute_1 = __importDefault(require("./routes/MyUserRoute"));
 const cloudinary_1 = require("cloudinary");
 const MyRestaurantRoute_1 = __importDefault(require("./routes/MyRestaurantRoute"));
 const RestaurantRoutes_1 = __importDefault(require("./routes/RestaurantRoutes"));
+const OrderRoute_1 = __importDefault(require("./routes/OrderRoute"));
 mongoose_1.default
     .connect(process.env.MONGODB_CONNECTION_STRING)
     .then(() => console.log("Connected to database!"));
@@ -31,6 +32,8 @@ cloudinary_1.v2.config({
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
+// Đặt trước parser JSON
+app.use("/api/order/momo/webhook", express_1.default.raw({ type: "*/*" }));
 app.get("/health", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.send({ message: "health OK!" });
 }));
@@ -38,6 +41,7 @@ app.get("/health", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 app.use("/api/my/user", MyUserRoute_1.default);
 app.use("/api/my/restaurant", MyRestaurantRoute_1.default);
 app.use("/api/restaurant", RestaurantRoutes_1.default);
+app.use("/api/order", OrderRoute_1.default);
 app.listen(5000, () => {
     console.log("Server is starting on port 5000");
 });

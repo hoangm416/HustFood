@@ -11,10 +11,10 @@ router.get("/search/:city", (0, express_validator_1.param)("city")
     .isString()
     .trim()
     .notEmpty()
-    .withMessage("Tên thành phố phải là một chuỗi ký tự hợp lệ"), RestaurantController_1.default.searchRestaurant);
+    .withMessage("Tên phường phải là một chuỗi ký tự"), RestaurantController_1.default.searchRestaurant);
 router.get("/:restaurantId", (0, express_validator_1.param)("restaurantId")
     .isString()
     .trim()
     .notEmpty()
-    .withMessage("Tên nhà hàng phỉa là một chuỗi ký tự hợp lệ"), RestaurantController_1.default.getRestaurant);
+    .withMessage("Tên quán ăn phải là một chuỗi ký tự"), RestaurantController_1.default.getRestaurant);
 exports.default = router;

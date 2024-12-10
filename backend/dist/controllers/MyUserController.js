@@ -17,7 +17,7 @@ const getCurrentUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const currentUser = yield user_1.default.findOne({ _id: req.userId });
         if (!currentUser) {
-            res.status(404).json({ message: "Không tìm thấy hồ sơ" });
+            res.status(404).json({ message: "Không tìm thấy người dùng" });
             return;
         }
         res.json(currentUser);
@@ -52,7 +52,7 @@ const updateCurrentUser = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const { name, addressLine1, phone, idCard } = req.body;
         const user = yield user_1.default.findById(req.userId);
         if (!user) {
-            res.status(4).json({ message: "Không tìm thấy hồ sơ" });
+            res.status(404).json({ message: "Không tìm thấy người dùng" });
             return;
         }
         user.name = name;
@@ -68,7 +68,7 @@ const updateCurrentUser = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.default = {
+    getCurrentUser,
     createCurrentUser,
     updateCurrentUser,
-    getCurrentUser,
 };
