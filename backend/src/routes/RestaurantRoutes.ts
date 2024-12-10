@@ -10,7 +10,7 @@ router.get(
       .isString()
       .trim()
       .notEmpty()
-      .withMessage("Tên thành phố phải là một chuỗi ký tự hợp lệ"),
+      .withMessage("Tên phường phải là một chuỗi ký tự"),
     RestaurantController.searchRestaurant
   );
 
@@ -20,7 +20,8 @@ router.get(
       .isString()
       .trim()
       .notEmpty()
-      .withMessage("Tên nhà hàng phỉa là một chuỗi ký tự hợp lệ"),
+      .withMessage("Tên quán ăn phải là một chuỗi ký tự"),
     RestaurantController.getRestaurant
   );
+
 export default router;

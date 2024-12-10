@@ -1,181 +1,127 @@
-// import Stripe from "stripe";
+import crypto from "crypto";
+import axios from "axios";
 import { Request, Response } from "express";
-import Restaurant from "../models/restaurant";
-import MenuItemType from "../models/restaurant";
 import Order from "../models/order";
+import Restaurant from "../models/restaurant";
 
-// const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
-const FRONTEND_URL = process.env.FRONTEND_URL as string;
-// const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
+const MOMO_PARTNER_CODE = process.env.MOMO_PARTNER_CODE!;
+const MOMO_ACCESS_KEY = process.env.MOMO_ACCESS_KEY!;
+const MOMO_SECRET_KEY = process.env.MOMO_SECRET_KEY!;
+const MOMO_ENDPOINT = "https://test-payment.momo.vn/v2/gateway/api/create";
 
-const getMyOrders = async (req: Request, res: Response) => {
+const createMoMoPayment = async (req: Request, res: Response) => {
   try {
-    const orders = await Order.find({ user: req.userId })
-      .populate("restaurant")
-      .populate("user");
+    const { cartItems, deliveryDetails, restaurantId } = req.body;
 
-    res.json(orders);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "something went wrong" });
+    // Lấy thông tin nhà hàng
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      throw new Error("Không tìm thấy nhà hàng");
+    }
+
+    // Tạo đơn hàng mới trong database
+    const newOrder = new Order({
+      restaurant: restaurant._id,
+      user: req.userId,
+      status: "pending",
+      deliveryDetails,
+      cartItems,
+      createdAt: new Date(),
+    });
+
+    await newOrder.save();
+
+    // Tổng giá trị đơn hàng
+    const totalAmount = cartItems.reduce(
+      (total: number, item: { quantity: number; price: number; }) => total + item.quantity * item.price,
+      restaurant.deliveryPrice
+    );
+
+    // Thông tin giao dịch gửi tới MoMo
+    const requestId = `${Date.now()}`;
+    const orderId = `${newOrder._id}`;
+    const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${totalAmount}&extraData=&ipnUrl=${process.env.BACKEND_URL}/api/momo/webhook&orderId=${orderId}
+            &orderInfo=Thanh toan don hang&partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${process.env.FRONTEND_URL}/order-status&requestId=${requestId}&requestType=captureWallet`;
+
+    const signature = crypto
+      .createHmac("sha256", MOMO_SECRET_KEY)
+      .update(rawSignature)
+      .digest("hex");
+
+    const paymentRequest = {
+      partnerCode: MOMO_PARTNER_CODE,
+      accessKey: MOMO_ACCESS_KEY,
+      requestId,
+      amount: totalAmount,
+      orderId,
+      orderInfo: "Thanh toán đơn hàng",
+      redirectUrl: `${process.env.FRONTEND_URL}/order-status`,
+      ipnUrl: `${process.env.BACKEND_URL}/api/momo/webhook`,
+      extraData: "",
+      requestType: "captureWallet",
+      signature,
+      lang: "vi",
+    };
+
+    // Gửi yêu cầu tới MoMo
+    const response = await axios.post(MOMO_ENDPOINT, paymentRequest);
+
+    if (response.data.resultCode !== 0) {
+      throw new Error(`Lỗi MoMo: ${response.data.message}`);
+    }
+
+    // Trả về URL để khách hàng thanh toán
+    res.json({ payUrl: response.data.payUrl });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
-type CheckoutSessionRequest = {
-  cartItems: {
-    menuItemId: string;
-    name: string;
-    quantity: string;
-  }[];
-  deliveryDetails: {
-    email: string;
-    name: string;
-    addressLine1: string;
-    city: string;
-  };
-  restaurantId: string;
-};
+const momoWebhookHandler = async (req: Request, res: Response) => {
+  try {
+    const {
+      orderId,
+      resultCode,
+      signature,
+      amount,
+      extraData,
+    } = req.body;
 
-// const stripeWebhookHandler = async (req: Request, res: Response) => {
-//   let event;
+    // Kiểm tra chữ ký hợp lệ
+    const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${amount}&extraData=${extraData}&orderId=${orderId}&orderInfo=Thanh toan don hang
+        &partnerCode=${MOMO_PARTNER_CODE}&requestId=${req.body.requestId}&responseTime=${req.body.responseTime}&resultCode=${resultCode}&transId=${req.body.transId}`;
 
-//   try {
-//     const sig = req.headers["stripe-signature"];
-//     event = STRIPE.webhooks.constructEvent(
-//       req.body,
-//       sig as string,
-//       STRIPE_ENDPOINT_SECRET
-//     );
-//   } catch (error: any) {
-//     console.log(error);
-//     return res.status(400).send(`Webhook error: ${error.message}`);
-//   }
+    const validSignature = crypto
+    .createHmac("sha256", MOMO_SECRET_KEY)
+    .update(rawSignature)
+    .digest("hex");
 
-//   if (event.type === "checkout.session.completed") {
-//     const order = await Order.findById(event.data.object.metadata?.orderId);
+    if (signature !== validSignature) {
+      res.status(400).json({ message: "Chữ ký không hợp lệ" });
+      return;
+    }
 
-//     if (!order) {
-//       return res.status(404).json({ message: "Order not found" });
-//     }
+    if (resultCode === 0) {
+        const order = await Order.findById(orderId);
+        if (!order) {
+          res.status(404).json({ message: "Không thấy đơn hàng" });
+          return;
+        }
 
-//     order.totalAmount = event.data.object.amount_total;
-//     order.status = "paid";
+        order.status = "Đã thanh toán";
+        await order.save();
+    }
 
-//     await order.save();
-//   }
+    res.status(200).send("Webhook processed");
 
-//   res.status(200).send();
-// };
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Webhook error");
+  }
+};  
 
-// const createCheckoutSession = async (req: Request, res: Response) => {
-//   try {
-//     const checkoutSessionRequest: CheckoutSessionRequest = req.body;
-
-//     const restaurant = await Restaurant.findById(
-//       checkoutSessionRequest.restaurantId
-//     );
-
-//     if (!restaurant) {
-//       throw new Error("Restaurant not found");
-//     }
-
-//     const newOrder = new Order({
-//       restaurant: restaurant,
-//       user: req.userId,
-//       status: "placed",
-//       deliveryDetails: checkoutSessionRequest.deliveryDetails,
-//       cartItems: checkoutSessionRequest.cartItems,
-//       createdAt: new Date(),
-//     });
-
-//     const lineItems = createLineItems(
-//       checkoutSessionRequest,
-//       restaurant.menuItems
-//     );
-
-//     const session = await createSession(
-//       lineItems,
-//       newOrder._id.toString(),
-//       restaurant.deliveryPrice,
-//       restaurant._id.toString()
-//     );
-
-//     if (!session.url) {
-//       return res.status(500).json({ message: "Error creating stripe session" });
-//     }
-
-//     await newOrder.save();
-//     res.json({ url: session.url });
-//   } catch (error: any) {
-//     console.log(error);
-//     res.status(500).json({ message: error.raw.message });
-//   }
-// };
-
-// const createLineItems = (
-//   checkoutSessionRequest: CheckoutSessionRequest,
-//   menuItems: MenuItemType[]
-// ) => {
-//   const lineItems = checkoutSessionRequest.cartItems.map((cartItem) => {
-//     const menuItem = menuItems.find(
-//       (item) => item._id.toString() === cartItem.menuItemId.toString()
-//     );
-
-//     if (!menuItem) {
-//       throw new Error(`Menu item not found: ${cartItem.menuItemId}`);
-//     }
-
-//     const line_item: Stripe.Checkout.SessionCreateParams.LineItem = {
-//       price_data: {
-//         currency: "gbp",
-//         unit_amount: menuItem.price,
-//         product_data: {
-//           name: menuItem.name,
-//         },
-//       },
-//       quantity: parseInt(cartItem.quantity),
-//     };
-
-//     return line_item;
-//   });
-
-//   return lineItems;
-// };
-
-// const createSession = async (
-//   lineItems: Stripe.Checkout.SessionCreateParams.LineItem[],
-//   orderId: string,
-//   deliveryPrice: number,
-//   restaurantId: string
-// ) => {
-//   const sessionData = await STRIPE.checkout.sessions.create({
-//     line_items: lineItems,
-//     shipping_options: [
-//       {
-//         shipping_rate_data: {
-//           display_name: "Delivery",
-//           type: "fixed_amount",
-//           fixed_amount: {
-//             amount: deliveryPrice,
-//             currency: "gbp",
-//           },
-//         },
-//       },
-//     ],
-//     mode: "payment",
-//     metadata: {
-//       orderId,
-//       restaurantId,
-//     },
-//     success_url: `${FRONTEND_URL}/order-status?success=true`,
-//     cancel_url: `${FRONTEND_URL}/detail/${restaurantId}?cancelled=true`,
-//   });
-
-//   return sessionData;
-// };
-
-export default {
-  getMyOrders,
-  // createCheckoutSession,
-  // stripeWebhookHandler,
+export default { 
+  createMoMoPayment,
+  momoWebhookHandler,
 };

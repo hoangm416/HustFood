@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Restaurant from "../models/restaurant";
 import cloudinary from "cloudinary";
 import mongoose from "mongoose";
+import Order from "../models/order";
 
 const createMyRestaurant = async (req: Request, res: Response) => {
     try {
@@ -35,7 +36,7 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     try {
       const restaurant = await Restaurant.findOne({ user: req.userId });
       if (!restaurant) {
-       res.status(404).json({ message: "không tìm thấy nhà hàng" });
+       res.status(404).json({ message: "Không tìm thấy nhà hàng" });
        return;
       }
       res.json(restaurant);
@@ -78,6 +79,52 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     }
   };
 
+  const getMyRestaurantOrders = async (req: Request, res: Response) => {
+    try {
+      const restaurant = await Restaurant.findOne({ user: req.userId });
+      if (!restaurant) {
+        res.status(404).json({ message: "Không thấy quán ăn" });
+        return;
+      }
+  
+      const orders = await Order.find({ restaurant: restaurant._id })
+        .populate("restaurant")
+        .populate("user");
+  
+      res.json(orders);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Đã xảy ra lỗi" });
+    }
+  };
+
+  const updateOrderStatus = async (req: Request, res: Response) => {
+    try {
+      const { orderId } = req.params;
+      const { status } = req.body;
+  
+      const order = await Order.findById(orderId);
+      if (!order) {
+        res.status(404).json({ message: "Không thấy đơn hàng" });
+        return;
+      }
+  
+      const restaurant = await Restaurant.findById(order.restaurant);
+      if (restaurant?.user?._id.toString() !== req.userId) {
+        res.status(401).send();
+        return;
+      }
+  
+      order.status = status;
+      await order.save();
+  
+      res.status(200).json(order);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Không thể cập nhật trạng thái đơn hàng" });
+    }
+  };
+
   const uploadImage = async (file: Express.Multer.File) => {
     const image = file;
     const base64Image = Buffer.from(image.buffer).toString("base64");
@@ -91,4 +138,6 @@ const createMyRestaurant = async (req: Request, res: Response) => {
     getMyRestaurant,
     createMyRestaurant,
     updateMyRestaurant,
+    getMyRestaurantOrders,
+    updateOrderStatus,
   }

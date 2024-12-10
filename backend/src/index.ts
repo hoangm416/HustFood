@@ -22,6 +22,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Đặt trước parser JSON
+app.use("/api/order/momo/webhook", express.raw({ type: "*/*" })); 
+
 app.get("/health", async (req: Request, res: Response)=>{
   res.send({message: "health OK!"});
 });

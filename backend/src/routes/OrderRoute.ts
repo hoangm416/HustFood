@@ -1,18 +1,12 @@
 import express from "express";
-import { jwtCheck, jwtParse } from "../middleware/auth";
 import OrderController from "../controllers/OrderController";
 
 const router = express.Router();
 
-router.get("/", jwtCheck, jwtParse, OrderController.getMyOrders);
+// Endpoint để tạo giao dịch thanh toán MoMo
+router.post("/momo/create", OrderController.createMoMoPayment);
 
-router.post(
-  "/checkout/create-checkout-session",
-  jwtCheck,
-  jwtParse,
-  // OrderController.createCheckoutSession
-);
-
-// router.post("/checkout/webhook", OrderController.stripeWebhookHandler);
+// Webhook xử lý thông báo từ MoMo
+router.post("/momo/webhook", OrderController.momoWebhookHandler);
 
 export default router;

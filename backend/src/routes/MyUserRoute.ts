@@ -15,4 +15,5 @@ router.put(
   validateMyUserRequest,
   MyUserController.updateCurrentUser
 );
+
 export default router;
