@@ -13,5 +13,5 @@
 3. Postman.com: cnweb43 - Groupweb222@
 4. Cloudinary.com: cnweb43@gmail.com - Group222@
 
-## translate .ts -> js
-chạy lệnh terminal: npm run build
+## Biên dịch .ts -> .js
+chạy lệnh terminal: npm run build để tạo folder dist
