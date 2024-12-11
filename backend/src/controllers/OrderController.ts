@@ -1,127 +1,159 @@
-import crypto from "crypto";
 import axios from "axios";
 import { Request, Response } from "express";
+import Restaurant, { MenuItemType } from "../models/restaurant";
 import Order from "../models/order";
-import Restaurant from "../models/restaurant";
 
-const MOMO_PARTNER_CODE = process.env.MOMO_PARTNER_CODE!;
-const MOMO_ACCESS_KEY = process.env.MOMO_ACCESS_KEY!;
-const MOMO_SECRET_KEY = process.env.MOMO_SECRET_KEY!;
+const MOMO_PARTNER_CODE = process.env.MOMO_PARTNER_CODE as string;
+const MOMO_ACCESS_KEY = process.env.MOMO_ACCESS_KEY as string;
+const MOMO_SECRET_KEY = process.env.MOMO_SECRET_KEY as string;
 const MOMO_ENDPOINT = "https://test-payment.momo.vn/v2/gateway/api/create";
+const FRONTEND_URL = process.env.FRONTEND_URL as string;
 
-const createMoMoPayment = async (req: Request, res: Response) => {
+const getMyOrders = async (req: Request, res: Response) => {
   try {
-    const { cartItems, deliveryDetails, restaurantId } = req.body;
+    const orders = await Order.find({ user: req.userId })
+      .populate("restaurant")
+      .populate("user");
 
-    // Lấy thông tin nhà hàng
-    const restaurant = await Restaurant.findById(restaurantId);
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Đã xảy ra lỗi" });
+  }
+};
+
+type CheckoutSessionRequest = {
+  cartItems: {
+    menuItemId: string;
+    name: string;
+    quantity: string;
+  }[];
+  deliveryDetails: {
+    email: string;
+    name: string;
+    addressLine1: string;
+    phone: string;
+  };
+  restaurantId: string;
+};
+
+const createCheckoutSession = async (req: Request, res: Response) => {
+  try {
+    const checkoutSessionRequest: CheckoutSessionRequest = req.body;
+
+    const restaurant = await Restaurant.findById(
+      checkoutSessionRequest.restaurantId
+    );
+
     if (!restaurant) {
-      throw new Error("Không tìm thấy nhà hàng");
+      throw new Error("Restaurant not found");
     }
 
-    // Tạo đơn hàng mới trong database
     const newOrder = new Order({
-      restaurant: restaurant._id,
+      restaurant: restaurant,
       user: req.userId,
-      status: "pending",
-      deliveryDetails,
-      cartItems,
+      status: "placed",
+      deliveryDetails: checkoutSessionRequest.deliveryDetails,
+      cartItems: checkoutSessionRequest.cartItems,
       createdAt: new Date(),
     });
 
-    await newOrder.save();
-
-    // Tổng giá trị đơn hàng
-    const totalAmount = cartItems.reduce(
-      (total: number, item: { quantity: number; price: number; }) => total + item.quantity * item.price,
+    const totalAmount = calculateTotalAmount(
+      checkoutSessionRequest,
+      restaurant.menuItems,
       restaurant.deliveryPrice
     );
 
-    // Thông tin giao dịch gửi tới MoMo
-    const requestId = `${Date.now()}`;
-    const orderId = `${newOrder._id}`;
-    const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${totalAmount}&extraData=&ipnUrl=${process.env.BACKEND_URL}/api/momo/webhook&orderId=${orderId}
-            &orderInfo=Thanh toan don hang&partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${process.env.FRONTEND_URL}/order-status&requestId=${requestId}&requestType=captureWallet`;
+    const paymentData = createMomoPaymentData(newOrder._id.toString(), totalAmount);
+    const momoResponse = await axios.post(MOMO_ENDPOINT, paymentData);
 
-    const signature = crypto
-      .createHmac("sha256", MOMO_SECRET_KEY)
-      .update(rawSignature)
-      .digest("hex");
-
-    const paymentRequest = {
-      partnerCode: MOMO_PARTNER_CODE,
-      accessKey: MOMO_ACCESS_KEY,
-      requestId,
-      amount: totalAmount,
-      orderId,
-      orderInfo: "Thanh toán đơn hàng",
-      redirectUrl: `${process.env.FRONTEND_URL}/order-status`,
-      ipnUrl: `${process.env.BACKEND_URL}/api/momo/webhook`,
-      extraData: "",
-      requestType: "captureWallet",
-      signature,
-      lang: "vi",
-    };
-
-    // Gửi yêu cầu tới MoMo
-    const response = await axios.post(MOMO_ENDPOINT, paymentRequest);
-
-    if (response.data.resultCode !== 0) {
-      throw new Error(`Lỗi MoMo: ${response.data.message}`);
+    if (momoResponse.data.resultCode !== 0) {
+      throw new Error("Error creating MoMo payment session");
     }
 
-    // Trả về URL để khách hàng thanh toán
-    res.json({ payUrl: response.data.payUrl });
+    await newOrder.save();
+    res.json({ url: momoResponse.data.payUrl });
   } catch (error: any) {
-    console.error(error);
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
 
+const calculateTotalAmount = (
+  checkoutSessionRequest: CheckoutSessionRequest,
+  menuItems: MenuItemType[],
+  deliveryPrice: number
+) => {
+  const itemsTotal = checkoutSessionRequest.cartItems.reduce((total, cartItem) => {
+    const menuItem = menuItems.find(
+      (item) => item._id.toString() === cartItem.menuItemId.toString()
+    );
+
+    if (!menuItem) {
+      throw new Error(`Menu item not found: ${cartItem.menuItemId}`);
+    }
+
+    return total + menuItem.price * parseInt(cartItem.quantity);
+  }, 0);
+
+  return itemsTotal + deliveryPrice;
+};
+
+const createMomoPaymentData = (orderId: string, amount: number) => {
+  const requestId = `${orderId}-${Date.now()}`;
+  const orderInfo = `Payment for order ${orderId}`;
+  const redirectUrl = `${FRONTEND_URL}/order-status?success=true`;
+  const ipnUrl = `${FRONTEND_URL}/momo-webhook`;
+
+  const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}
+      &partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=captureWallet`;
+  const signature = generateSignature(rawSignature, MOMO_SECRET_KEY);
+
+  return {
+    partnerCode: MOMO_PARTNER_CODE,
+    accessKey: MOMO_ACCESS_KEY,
+    requestId,
+    amount,
+    orderId,
+    orderInfo,
+    redirectUrl,
+    ipnUrl,
+    requestType: "captureWallet",
+    extraData: "",
+    signature,
+  };
+};
+
+const generateSignature = (rawSignature: string, secretKey: string) => {
+  const crypto = require("crypto");
+  return crypto.createHmac("sha256", secretKey).update(rawSignature).digest("hex");
+};
+
 const momoWebhookHandler = async (req: Request, res: Response) => {
   try {
-    const {
-      orderId,
-      resultCode,
-      signature,
-      amount,
-      extraData,
-    } = req.body;
-
-    // Kiểm tra chữ ký hợp lệ
-    const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${amount}&extraData=${extraData}&orderId=${orderId}&orderInfo=Thanh toan don hang
-        &partnerCode=${MOMO_PARTNER_CODE}&requestId=${req.body.requestId}&responseTime=${req.body.responseTime}&resultCode=${resultCode}&transId=${req.body.transId}`;
-
-    const validSignature = crypto
-    .createHmac("sha256", MOMO_SECRET_KEY)
-    .update(rawSignature)
-    .digest("hex");
-
-    if (signature !== validSignature) {
-      res.status(400).json({ message: "Chữ ký không hợp lệ" });
-      return;
-    }
+    const { orderId, resultCode } = req.body;
 
     if (resultCode === 0) {
-        const order = await Order.findById(orderId);
-        if (!order) {
-          res.status(404).json({ message: "Không thấy đơn hàng" });
-          return;
-        }
+      const order = await Order.findById(orderId);
 
-        order.status = "Đã thanh toán";
-        await order.save();
+      if (!order) {
+        res.status(404).json({ message: "Order not found" });
+        return;
+      }
+
+      order.status = "Đã thanh toán";
+      await order.save();
     }
 
-    res.status(200).send("Webhook processed");
-
+    res.status(200).send();
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Webhook error");
+    console.log(error);
+    res.status(500).json({ message: "Webhook processing failed" });
   }
-};  
+};
 
-export default { 
-  createMoMoPayment,
+export default {
+  getMyOrders,
+  createCheckoutSession,
   momoWebhookHandler,
 };

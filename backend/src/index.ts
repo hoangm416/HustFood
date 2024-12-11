@@ -19,17 +19,18 @@ mongoose
   });
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
 // Đặt trước parser JSON
-app.use("/api/order/momo/webhook", express.raw({ type: "*/*" })); 
+app.use("/api/order/checkout/webhook", express.raw({ type: "*/*" })); 
+app.use(cors());
+
+// Cấu hình middleware JSON
+app.use(express.json());
 
 app.get("/health", async (req: Request, res: Response)=>{
   res.send({message: "health OK!"});
 });
 
-// /api/my/user
 app.use("/api/my/user", myUserRoute);
 app.use("/api/my/restaurant", myRestaurantRoute);
 app.use("/api/restaurant",restaurantRoute);
