@@ -2,6 +2,7 @@ import axios from "axios";
 import { Request, Response } from "express";
 import Restaurant, { MenuItemType } from "../models/restaurant";
 import Order from "../models/order";
+import crypto from "crypto";
 
 const MOMO_PARTNER_CODE = process.env.MOMO_PARTNER_CODE as string;
 const MOMO_ACCESS_KEY = process.env.MOMO_ACCESS_KEY as string;
@@ -17,8 +18,8 @@ const getMyOrders = async (req: Request, res: Response) => {
 
     res.json(orders);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Đã xảy ra lỗi" });
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "An error occurred while fetching orders." });
   }
 };
 
@@ -41,22 +42,11 @@ const createCheckoutSession = async (req: Request, res: Response) => {
   try {
     const checkoutSessionRequest: CheckoutSessionRequest = req.body;
 
-    const restaurant = await Restaurant.findById(
-      checkoutSessionRequest.restaurantId
-    );
-
+    const restaurant = await Restaurant.findById(checkoutSessionRequest.restaurantId);
     if (!restaurant) {
-      throw new Error("Restaurant not found");
+      res.status(404).json({ message: "Restaurant not found." });
+      return;
     }
-
-    const newOrder = new Order({
-      restaurant: restaurant,
-      user: req.userId,
-      status: "placed",
-      deliveryDetails: checkoutSessionRequest.deliveryDetails,
-      cartItems: checkoutSessionRequest.cartItems,
-      createdAt: new Date(),
-    });
 
     const totalAmount = calculateTotalAmount(
       checkoutSessionRequest,
@@ -64,18 +54,29 @@ const createCheckoutSession = async (req: Request, res: Response) => {
       restaurant.deliveryPrice
     );
 
+    const newOrder = new Order({
+      restaurant: restaurant._id,
+      user: req.userId,
+      status: "Đã đặt hàng",
+      deliveryDetails: checkoutSessionRequest.deliveryDetails,
+      cartItems: checkoutSessionRequest.cartItems,
+      createdAt: new Date(),
+    });
+
     const paymentData = createMomoPaymentData(newOrder._id.toString(), totalAmount);
     const momoResponse = await axios.post(MOMO_ENDPOINT, paymentData);
 
     if (momoResponse.data.resultCode !== 0) {
-      throw new Error("Error creating MoMo payment session");
+      console.error("MoMo API Error:", momoResponse.data);
+      res.status(400).json({ message: "Error creating MoMo payment session." });
+      return;
     }
 
     await newOrder.save();
     res.json({ url: momoResponse.data.payUrl });
   } catch (error: any) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    console.error("Error creating checkout session:", error);
+    res.status(500).json({ message: error.message || "Internal Server Error." });
   }
 };
 
@@ -83,20 +84,25 @@ const calculateTotalAmount = (
   checkoutSessionRequest: CheckoutSessionRequest,
   menuItems: MenuItemType[],
   deliveryPrice: number
-) => {
-  const itemsTotal = checkoutSessionRequest.cartItems.reduce((total, cartItem) => {
-    const menuItem = menuItems.find(
-      (item) => item._id.toString() === cartItem.menuItemId.toString()
-    );
+): number => {
+  try {
+    const itemsTotal = checkoutSessionRequest.cartItems.reduce((total, cartItem) => {
+      const menuItem = menuItems.find(
+        (item) => item._id.toString() === cartItem.menuItemId.toString()
+      );
 
-    if (!menuItem) {
-      throw new Error(`Menu item not found: ${cartItem.menuItemId}`);
-    }
+      if (!menuItem) {
+        throw new Error(`Menu item not found: ${cartItem.menuItemId}`);
+      }
 
-    return total + menuItem.price * parseInt(cartItem.quantity);
-  }, 0);
+      return total + menuItem.price * parseInt(cartItem.quantity, 10);
+    }, 0);
 
-  return itemsTotal + deliveryPrice;
+    return itemsTotal + deliveryPrice;
+  } catch (error) {
+    console.error("Error calculating total amount:", error);
+    throw error;
+  }
 };
 
 const createMomoPaymentData = (orderId: string, amount: number) => {
@@ -105,8 +111,7 @@ const createMomoPaymentData = (orderId: string, amount: number) => {
   const redirectUrl = `${FRONTEND_URL}/order-status?success=true`;
   const ipnUrl = `${FRONTEND_URL}/momo-webhook`;
 
-  const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}
-      &partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=captureWallet`;
+  const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${amount}&extraData=&ipnUrl=${ipnUrl}&orderId=${orderId}&orderInfo=${orderInfo}&partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${redirectUrl}&requestId=${requestId}&requestType=captureWallet`;
   const signature = generateSignature(rawSignature, MOMO_SECRET_KEY);
 
   return {
@@ -124,8 +129,7 @@ const createMomoPaymentData = (orderId: string, amount: number) => {
   };
 };
 
-const generateSignature = (rawSignature: string, secretKey: string) => {
-  const crypto = require("crypto");
+const generateSignature = (rawSignature: string, secretKey: string): string => {
   return crypto.createHmac("sha256", secretKey).update(rawSignature).digest("hex");
 };
 
@@ -133,22 +137,28 @@ const momoWebhookHandler = async (req: Request, res: Response) => {
   try {
     const { orderId, resultCode } = req.body;
 
+    if (!orderId) {
+      res.status(400).json({ message: "Missing orderId in webhook payload." });
+      return;
+    }
+
     if (resultCode === 0) {
       const order = await Order.findById(orderId);
 
       if (!order) {
-        res.status(404).json({ message: "Order not found" });
+        res.status(404).json({ message: "Order not found." });
         return;
       }
 
-      order.status = "Đã thanh toán";
+      order.status = "Đã đặt hàng";
       await order.save();
+      console.log(`Order ${orderId} marked as paid.`);
     }
 
     res.status(200).send();
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Webhook processing failed" });
+    console.error("Error handling MoMo webhook:", error);
+    res.status(500).json({ message: "Webhook processing failed." });
   }
 };
 
