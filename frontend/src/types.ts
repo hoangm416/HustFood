@@ -3,8 +3,8 @@ export type User = {
   email: string;
   name: string;
   addressLine1: string;
-  phone: string; // da sua
-  idCard: string; // da sua
+  phone: string; 
+  idCard: string; 
 };
 
 export type MenuItem = {
