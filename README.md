@@ -15,3 +15,6 @@
 
 ## Biên dịch .ts -> .js
 chạy lệnh terminal: npm run build để tạo folder dist
+
+## Thanh toán MoMo
+Tải ứng dụng MoMo UAT để kiểm tra tại https://developers.momo.vn/v3/vi/download

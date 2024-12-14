@@ -18,8 +18,8 @@ const getMyOrders = async (req: Request, res: Response) => {
 
     res.json(orders);
   } catch (error) {
-    console.error("Error fetching orders:", error);
-    res.status(500).json({ message: "An error occurred while fetching orders." });
+    console.error("Lỗi lấy dữ liệu:", error);
+    res.status(500).json({ message: "Xảy ra lỗi khi lấy dữ liệu đơn hàng" });
   }
 };
 
@@ -44,7 +44,7 @@ const createCheckoutSession = async (req: Request, res: Response) => {
 
     const restaurant = await Restaurant.findById(checkoutSessionRequest.restaurantId);
     if (!restaurant) {
-      res.status(404).json({ message: "Restaurant not found." });
+      res.status(404).json({ message: "Không thấy quán ăn" });
       return;
     }
 
@@ -67,16 +67,16 @@ const createCheckoutSession = async (req: Request, res: Response) => {
     const momoResponse = await axios.post(MOMO_ENDPOINT, paymentData);
 
     if (momoResponse.data.resultCode !== 0) {
-      console.error("MoMo API Error:", momoResponse.data);
-      res.status(400).json({ message: "Error creating MoMo payment session." });
+      console.error("Lỗi MoMo API:", momoResponse.data);
+      res.status(400).json({ message: "Lỗi tạo phiên thanh toán MoMo" });
       return;
     }
 
     await newOrder.save();
     res.json({ url: momoResponse.data.payUrl });
   } catch (error: any) {
-    console.error("Error creating checkout session:", error);
-    res.status(500).json({ message: error.message || "Internal Server Error." });
+    console.error("Lỗi tạo phiên thanh toán:", error);
+    res.status(500).json({ message: error.message || "Lỗi máy chủ nội bộ" });
   }
 };
 
@@ -92,7 +92,7 @@ const calculateTotalAmount = (
       );
 
       if (!menuItem) {
-        throw new Error(`Menu item not found: ${cartItem.menuItemId}`);
+        throw new Error(`Không thấy món ăn: ${cartItem.menuItemId}`);
       }
 
       return total + menuItem.price * parseInt(cartItem.quantity, 10);
@@ -100,7 +100,7 @@ const calculateTotalAmount = (
 
     return itemsTotal + deliveryPrice;
   } catch (error) {
-    console.error("Error calculating total amount:", error);
+    console.error("Lỗi tính toán:", error);
     throw error;
   }
 };
@@ -138,7 +138,7 @@ const momoWebhookHandler = async (req: Request, res: Response) => {
     const { orderId, resultCode } = req.body;
 
     if (!orderId) {
-      res.status(400).json({ message: "Missing orderId in webhook payload." });
+      res.status(400).json({ message: "Thiếu orderId trong dữ liệu webhook" });
       return;
     }
 
@@ -146,19 +146,19 @@ const momoWebhookHandler = async (req: Request, res: Response) => {
       const order = await Order.findById(orderId);
 
       if (!order) {
-        res.status(404).json({ message: "Order not found." });
+        res.status(404).json({ message: "Không thấy đơn hàng" });
         return;
       }
 
-      order.status = "Đã đặt hàng";
+      order.status = "Đã thanh toán";
       await order.save();
-      console.log(`Order ${orderId} marked as paid.`);
+      console.log(`Đơn hàng ${orderId} đã thanh toán thành công`);
     }
 
     res.status(200).send();
   } catch (error) {
-    console.error("Error handling MoMo webhook:", error);
-    res.status(500).json({ message: "Webhook processing failed." });
+    console.error("Lỗi xử lý MoMo webhook:", error);
+    res.status(500).json({ message: "Xử lý webhook thất bại" });
   }
 };
 
