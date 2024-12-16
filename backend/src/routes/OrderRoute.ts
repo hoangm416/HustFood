@@ -15,4 +15,6 @@ router.post(
 
 router.post("/checkout/webhook", OrderController.momoWebhookHandler);
 
+router.get("/order-status", OrderController.handleOrderStatus);
+
 export default router;
