@@ -57,7 +57,7 @@ const createCheckoutSession = async (req: Request, res: Response) => {
     const newOrder = new Order({
       restaurant: restaurant._id,
       user: req.userId,
-      status: "Đã đặt hàng",
+      status: "placed",
       deliveryDetails: checkoutSessionRequest.deliveryDetails,
       cartItems: checkoutSessionRequest.cartItems,
       createdAt: new Date(),
@@ -150,7 +150,7 @@ const momoWebhookHandler = async (req: Request, res: Response) => {
         return;
       }
 
-      order.status = "Đã thanh toán";
+      order.status = "paid";
       await order.save();
       console.log(`Đơn hàng ${orderId} đã thanh toán thành công`);
     }
